@@ -47,7 +47,13 @@ suspend fun String.dartfmt() : String = coroutineScope {
             throw IllegalStateException("dartfmt returned exit code $result")
         }
 
-        dartOutputStream.toByteArray().toString(Charsets.UTF_8)
+        val formattedOutput = dartOutputStream.toByteArray().toString(Charsets.UTF_8)
+        if (formattedOutput.startsWith("Idiomatically formats Dart source code")) {
+            log.warn.."dartfmt present but failed to execute properly"
+            this@dartfmt
+        } else {
+            formattedOutput
+        }
     } catch (e: IOException) {
         log.warn..e
         log.info.."If you see message about dartfmt, you might need to export PATH to dart-sdk"
