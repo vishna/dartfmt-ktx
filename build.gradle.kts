@@ -22,6 +22,7 @@ dependencies {
     compile("com.github.vishna:emojilog:master-SNAPSHOT")
 
     testCompile("junit", "junit", "4.12")
+    testCompile("org.amshove.kluent:kluent:1.34")
 }
 
 tasks.withType<KotlinCompile> {

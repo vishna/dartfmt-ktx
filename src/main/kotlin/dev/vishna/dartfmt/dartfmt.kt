@@ -22,6 +22,7 @@ private val dartfmt by lazy {
             command.execute { inuputStream ->
                 inuputStream weaveToBlocking outputStream
             }
+            command = listOf("dartfmt")
         } catch (t: IOException) {
             command = listOf("/bin/sh", "-c", "dartfmt")
         }
