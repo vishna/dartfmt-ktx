@@ -10,27 +10,34 @@ import dev.vishna.emojilog.android.info
 import dev.vishna.emojilog.android.warn
 import dev.vishna.kmnd.execute
 import dev.vishna.kmnd.weaveToBlocking
+import java.io.File
 
 internal val log by lazy { defaultLogger() }
 
 // this tries to figure out where dartfmt command is
 private val dartfmt by lazy {
-    var command : List<String> = listOf("dartfmt", "--help")
+    val paths = System.getenv("PATH").split(":")
+    val homePath = System.getProperty("user.home")
+    val dartPath = paths.map { path -> "$path/cache/dart-sdk/bin".replaceFirst(Regex("^~"), homePath) }.firstOrNull {
+        File(it).exists()
+    }
+    val dartFmt = if (dartPath.isNullOrBlank()) "dartfmt" else "$dartPath/dartfmt"
+    var command: List<String> = listOf(dartFmt, "--help")
     runBlocking {
         try {
             val outputStream = ByteArrayOutputStream()
             command.execute { inuputStream ->
                 inuputStream weaveToBlocking outputStream
             }
-            command = listOf("dartfmt")
+            command = listOf(dartFmt)
         } catch (t: IOException) {
-            command = listOf("/bin/sh", "-c", "dartfmt")
+            command = listOf("/bin/sh", "-c", dartFmt)
         }
     }
     command
 }
 
-suspend fun String.dartfmt() : String = coroutineScope {
+suspend fun String.dartfmt(): String = coroutineScope {
     // TODO add some sort of LRU cache for this
     try {
         val dartOutputStream = ByteArrayOutputStream()
