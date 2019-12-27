@@ -11,12 +11,16 @@ import dev.vishna.emojilog.android.warn
 import dev.vishna.kmnd.execute
 import dev.vishna.kmnd.shList
 import dev.vishna.kmnd.weaveToBlocking
+import org.apache.commons.lang3.SystemUtils
 import java.io.File
 
 internal val log by lazy { defaultLogger() }
 
 // this tries to figure out where dartfmt command is
 private val dartfmt by lazy {
+    if (SystemUtils.IS_OS_WINDOWS) {
+        return@lazy "dartfmt".shList()
+    }
     val paths = System.getenv("PATH").split(":")
     val homePath = System.getProperty("user.home")
     val dartPath = paths.map { path -> "$path/cache/dart-sdk/bin".replaceFirst(Regex("^~"), homePath) }.firstOrNull {
