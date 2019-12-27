@@ -9,6 +9,7 @@ import dev.vishna.emojilog.std.*
 import dev.vishna.emojilog.android.info
 import dev.vishna.emojilog.android.warn
 import dev.vishna.kmnd.execute
+import dev.vishna.kmnd.shList
 import dev.vishna.kmnd.weaveToBlocking
 import java.io.File
 
@@ -31,7 +32,7 @@ private val dartfmt by lazy {
             }
             command = listOf(dartFmt)
         } catch (t: IOException) {
-            command = listOf("/bin/sh", "-c", dartFmt)
+            command = dartFmt.shList()
         }
     }
     command

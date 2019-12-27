@@ -18,7 +18,7 @@ dependencies {
     compile(kotlin("stdlib-jdk8"))
     compile("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.0.1")
     compile("org.jetbrains.kotlinx:kotlinx-coroutines-jdk8:1.0.1")
-    compile("com.github.vishna:kmnd:master-SNAPSHOT")
+    compile("com.github.vishna:kmnd:0.0.2")
     compile("com.github.vishna:emojilog:master-SNAPSHOT")
 
     testCompile("junit", "junit", "4.12")
