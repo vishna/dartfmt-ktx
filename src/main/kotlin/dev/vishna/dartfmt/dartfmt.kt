@@ -68,5 +68,9 @@ suspend fun String.dartfmt(): String = coroutineScope {
         log.info.."If you see message about dartfmt, you might need to export PATH to dart-sdk"
         log.info.."""e.g. export PATH="${'$'}PATH:/path/to/flutter/bin/cache/dart-sdk/bin""""
         this@dartfmt
+    } catch (ise: IllegalStateException) {
+        log.warn..ise
+        log.info.."Failed to apply dartfmt formatting to the generated code"
+        this@dartfmt
     }
 }
