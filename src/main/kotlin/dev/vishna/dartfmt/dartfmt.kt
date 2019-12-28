@@ -45,6 +45,10 @@ private val dartfmt by lazy {
 suspend fun String.dartfmt(): String = coroutineScope {
     // TODO add some sort of LRU cache for this
     try {
+        if (SystemUtils.IS_OS_WINDOWS) {
+            return@coroutineScope this@dartfmt.dartfmtWinOS()
+        }
+
         val dartOutputStream = ByteArrayOutputStream()
         val result = dartfmt.execute { outputStream, inputStream, errorStream ->
 
@@ -77,4 +81,25 @@ suspend fun String.dartfmt(): String = coroutineScope {
         log.info.."Failed to apply dartfmt formatting to the generated code"
         this@dartfmt
     }
+}
+
+suspend fun String.dartfmtWinOS(): String = coroutineScope {
+    val tmpFile = File.createTempFile("dartfmt_ktx", ".dart")
+    tmpFile.writeText(this@dartfmtWinOS, Charsets.UTF_8)
+
+    val cmd = (dartfmt + "-w") + tmpFile.absolutePath
+
+    val dartOutputStream = ByteArrayOutputStream()
+    val result = cmd.execute { inputStream, errorStream ->
+        inputStream weaveToBlocking dartOutputStream
+        errorStream weaveToBlocking System.err
+    }
+
+    if (result != 0) {
+        throw IllegalStateException("dartfmt returned exit code $result")
+    }
+
+    val formattedOutput = tmpFile.readText(Charsets.UTF_8)
+    tmpFile.delete()
+    return@coroutineScope formattedOutput
 }
